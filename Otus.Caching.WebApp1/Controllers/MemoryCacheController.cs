@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Otus.Caching.WebApp1.Controllers
 {
+
   [ApiController]
   [Route("[controller]")]
   public class MemoryCacheController : ControllerBase
@@ -52,13 +53,17 @@ namespace Otus.Caching.WebApp1.Controllers
 
         weatherForecast = await _weatherApiClient.GetWeatherForecast();
 
-        var cacheExpirationOptions = new MemoryCacheEntryOptions
+        var cacheEntryOptions = new MemoryCacheEntryOptions
         {
-          AbsoluteExpiration = DateTime.Now.AddSeconds(10),
-          Priority = CacheItemPriority.Normal
+          AbsoluteExpiration = DateTime.Now.AddSeconds(100),
+          Priority = CacheItemPriority.Normal,
+          ExpirationTokens =
+          {
+            // new WeatherListener()
+          }
         };
 
-        _cache.Set(cacheKey, weatherForecast, cacheExpirationOptions);
+        _cache.Set(cacheKey, weatherForecast, cacheEntryOptions);
 
         _logger.LogInformation("Loaded {Count} items", weatherForecast.Count);
         return weatherForecast;

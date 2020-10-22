@@ -38,10 +38,13 @@ namespace Otus.Caching.WebApp1
 
       services.AddDbContext<ApplicationContext>(options =>
         options.UseNpgsql("Host=localhost;Database=my_db;Username=postgres;Password=mysecretpassword"));
-      
+
       services.AddEFSecondLevelCache(options =>
-          options.UseMemoryCacheProvider()
+        options.UseMemoryCacheProvider()
       );
+
+      services.AddScoped<IRepository<User>, UserRepository>();
+      services.Decorate<IRepository<User>, CachingRepository<User>>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,20 +59,21 @@ namespace Otus.Caching.WebApp1
 
       app.UseAuthorization();
 
-      // app.UseResponseCaching();
+      app.UseResponseCaching();
       //
-      // app.Use(async (context, next) =>
-      // {
-      //   context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue
-      //   {
-      //     Public = true,
-      //     MaxAge = TimeSpan.FromSeconds(10),
-      //   };
-      //   
-      //   context.Response.Headers[HeaderNames.Vary] = new[] {"Accept-Encoding"};
-      //
-      //   await next();
-      // });
+
+      app.Use(async (context, next) =>
+      {
+        context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue
+        {
+          Public = true,
+          MaxAge = TimeSpan.FromSeconds(10),
+        };
+
+        context.Response.Headers[HeaderNames.Vary] = new[] {"Accept-Encoding"};
+
+        await next();
+      });
 
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 

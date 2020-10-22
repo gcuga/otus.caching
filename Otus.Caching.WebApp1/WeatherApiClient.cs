@@ -14,9 +14,9 @@ namespace Otus.Caching.WebApp1
       _httpClient = httpClient;
     }
 
-    public async Task<List<WeatherForecast>> GetWeatherForecast()
+    public Task<List<WeatherForecast>> GetWeatherForecast()
     {
-      return await _httpClient
+      return _httpClient
         .GetFromJsonAsync<List<WeatherForecast>>("http://localhost:5002/weatherforecast");
     }
   }
