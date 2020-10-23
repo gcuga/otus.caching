@@ -57,10 +57,6 @@ namespace Otus.Caching.WebApp1.Controllers
         {
           AbsoluteExpiration = DateTime.Now.AddSeconds(100),
           Priority = CacheItemPriority.Normal,
-          ExpirationTokens =
-          {
-            // new WeatherListener()
-          }
         };
 
         _cache.Set(cacheKey, weatherForecast, cacheEntryOptions);

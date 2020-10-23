@@ -32,15 +32,16 @@ namespace Otus.Caching.WebApp1
 
       services.AddLazyCache();
 
-      // services.AddResponseCaching();
-
-      services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
+      
+      services.AddResponseCaching();
+      
+      // services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost"; });
 
       services.AddDbContext<ApplicationContext>(options =>
         options.UseNpgsql("Host=localhost;Database=my_db;Username=postgres;Password=mysecretpassword"));
 
       services.AddEFSecondLevelCache(options =>
-        options.UseMemoryCacheProvider()
+        options.UseMemoryCacheProvider(CacheExpirationMode.Sliding, TimeSpan.FromSeconds(10))
       );
 
       services.AddScoped<IRepository<User>, UserRepository>();
@@ -54,26 +55,22 @@ namespace Otus.Caching.WebApp1
       {
         app.UseDeveloperExceptionPage();
       }
-
       app.UseRouting();
 
-      app.UseAuthorization();
-
+      
       app.UseResponseCaching();
-      //
 
       app.Use(async (context, next) =>
       {
         context.Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue
         {
           Public = true,
-          MaxAge = TimeSpan.FromSeconds(10),
         };
-
-        context.Response.Headers[HeaderNames.Vary] = new[] {"Accept-Encoding"};
-
+      
         await next();
       });
+
+      app.UseAuthorization();
 
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 

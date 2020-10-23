@@ -19,7 +19,7 @@ namespace Otus.Caching.WebApp1.Controllers
     }
 
     [HttpGet]
-    [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10)]
+    // [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10)]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
       var weatherForecast = await _weatherApiClient.GetWeatherForecast();

@@ -28,7 +28,8 @@ namespace Otus.Caching.WebApp1.Controllers
     [HttpGet]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {
-      return await _cache.GetOrAddAsync("getWeatherForecast", PopulateCache, DateTimeOffset.Now.AddSeconds(10));
+      var key = "getWeatherForecast";
+      return await _cache.GetOrAddAsync(key, PopulateCache, DateTimeOffset.Now.AddSeconds(10));
     }
 
     private async Task<List<WeatherForecast>> PopulateCache()

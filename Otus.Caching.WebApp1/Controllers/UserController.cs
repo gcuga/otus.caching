@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EFCoreSecondLevelCacheInterceptor;
@@ -22,10 +23,12 @@ namespace Otus.Caching.WebApp1.Controllers
 
     public Task<List<User>> Get()
     {
-      return _db
+      var listAsync = _db
         .Users
         .Cacheable()
         .ToListAsync();
+      
+      return listAsync;
     }
 
     public async Task<User> Post(User user)
